@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model prioridades {
+  prd_id        Int       @id @default(autoincrement())
+  prd_descricao String?   @db.VarChar(20)
+  tarefas       tarefas[]
+}
+
+model situacoes {
+  sit_id        Int       @id @default(autoincrement())
+  sit_descricao String    @db.VarChar(45)
+  sit_ordem     Int?      @db.TinyInt
+  tarefas       tarefas[]
+}
+
+model tarefas {
+  trf_id        Int         @id @default(autoincrement())
+  trf_usr_id    Int
+  trf_prd_id    Int
+  trf_sit_id    Int
+  trf_titulo    String      @db.VarChar(30)
+  trf_descricao String?     @db.VarChar(255)
+  trf_ordem     Int?        @db.TinyInt
+  prioridades   prioridades @relation(fields: [trf_prd_id], references: [prd_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tarefas_prioridades1")
+  situacoes     situacoes   @relation(fields: [trf_sit_id], references: [sit_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tarefas_situacoes1")
+  usuarios      usuarios    @relation(fields: [trf_usr_id], references: [usr_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tarefas_usuarios")
+
+  @@index([trf_prd_id], map: "fk_tarefas_prioridades1_idx")
+  @@index([trf_sit_id], map: "fk_tarefas_situacoes1_idx")
+  @@index([trf_usr_id], map: "fk_tarefas_usuarios_idx")
+}
+
+model usuarios {
+  usr_id    Int       @id @default(autoincrement())
+  usr_nome  String    @unique(map: "usr_nome_UNIQUE") @db.VarChar(50)
+  usr_senha String    @db.VarChar(45)
+  tarefas   tarefas[]
+}
