@@ -40,6 +40,6 @@ model tarefas {
 model usuarios {
   usr_id    Int       @id @default(autoincrement())
   usr_nome  String    @unique(map: "usr_nome_UNIQUE") @db.VarChar(50)
-  usr_senha String    @db.VarChar(45)
+  usr_senha String    @db.VarChar(100)
   tarefas   tarefas[]
 }
